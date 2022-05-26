@@ -126,6 +126,35 @@ async function run() {
       res.send(allusers)
     })
 
+    app.get('/user-orders', async (req, res) => {
+      // const decodedEmail = req.decoded.email
+      const email = req.query.email;
+      // if (email === decodedEmail) {
+      const query = { email: email };
+      const cursor = ordersCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+      // }
+      // else{
+      //     res.status(403).send({message: 'forbidden access'})
+      // }
+    })
+
+    app.post('/create-payment-intent', async (req, res) => {
+      const service = req.body;
+      const price = service.totalPrice;
+      const amount = price * 100;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'bdt',
+        payment_method_types: ['card']
+      });
+      // console.log('ppp',paymentIntent.client_secret);
+      res.send({ clientSecret: paymentIntent.client_secret })
+    });
+
+
+
 
 
 
