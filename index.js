@@ -230,6 +230,37 @@ async function run() {
       res.send(singlepaid)
     })
 
+    
+    app.put('/user/admin/:email', async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email };
+      const user =req.body;
+      const updateDoc = {
+                role: 'admin',
+                name:user.name,
+                email:user.email,
+                phone:user.phone
+      };
+      const result = await userCollection.insertOne(updateDoc);
+      res.send(result);
+    })
+
+    app.get('/admin/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = await userCollection.findOne({ email: email });
+      const isAdmin = user?.role === 'admin';
+      res.send({ admin: isAdmin })
+    })
+
+  }
+  finally {
+
+  }
+
+}
+
+run().catch(console.dir)
+
 
 
 
