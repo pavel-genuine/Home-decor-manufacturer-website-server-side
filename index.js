@@ -47,6 +47,19 @@ async function run() {
       res.send(allorders)
     })
 
+    app.get('/tools', async (req, res) => {
+      const query = {}
+      const cursor = toolsCollection.find(query)
+      const alltools = await cursor.toArray()
+      res.send(alltools)
+    })
+
+    app.post('/tool', async (req, res) => {
+      const tool = req.body;
+      const result = await toolsCollection.insertOne(tool);
+      res.send(result)
+    })
+
 
 
 
