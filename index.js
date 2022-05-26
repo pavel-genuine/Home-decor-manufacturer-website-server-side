@@ -31,6 +31,27 @@ async function run() {
     const paymentCollection = client.db('toolsFactory').collection('payment')
 
 
+    app.post('/sign-in', async (req, res) => {
+      const user = req.body;
+      const accessToken = jwt.sign(user, secretTicket, {
+        expiresIn: '1d'
+      });
+      res.send({ accessToken });
+    })
+
+
+    app.get('/orders', async (req, res) => {
+      const query = {}
+      const cursor = ordersCollection.find(query)
+      const allorders = await cursor.toArray()
+      res.send(allorders)
+    })
+
+
+
+
+
+
 
 app.get('/', (req, res) => {
   res.send('full-stack-12-server running')
