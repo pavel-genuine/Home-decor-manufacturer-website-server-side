@@ -112,6 +112,20 @@ async function run() {
       res.send(allreviews)
     })
 
+    app.get('/user', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email }
+      const user = await userCollection.findOne(query)
+      res.send(user)
+    })
+
+    app.get('/users', async (req, res) => {
+      const query = {}
+      const cursor = userCollection.find(query)
+      const allusers = await cursor.toArray()
+      res.send(allusers)
+    })
+
 
 
 
