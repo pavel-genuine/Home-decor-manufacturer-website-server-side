@@ -75,6 +75,21 @@ async function run() {
     
     })
 
+    app.put('/shipped/:id', async(req, res) =>{
+      const id = req.params.id;
+      const tool = req.body;
+      const filter = {_id: ObjectId(id)};
+      // const options = { upsert: true };
+      const updatedDoc = {
+          $set: {
+            status: "shipped"
+          }
+      };
+      const result = await ordersCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    
+    })
+
 
     app.get('/purchase/:id', async (req, res) => {
       const id = req.params.id
@@ -112,8 +127,8 @@ async function run() {
       res.send(allreviews)
     })
 
-    app.get('/user', async (req, res) => {
-      const email = req.query.email;
+    app.get('/user/:email', async (req, res) => {
+      const email = req.params.email;
       const query = { email: email }
       const user = await userCollection.findOne(query)
       res.send(user)
