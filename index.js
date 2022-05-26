@@ -16,6 +16,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function verifyJWT(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+      return res.status(401).send({ message: 'unauthorized access' });
+  }
+  const token = authHeader.split(' ')[1];
+  jwt.verify(token,secretTicket, (err, decoded) => {
+      if (err) {
+          return res.status(403).send({ message: 'Forbidden access' });
+      }
+      console.log('decoded', decoded);
+      // console.log(process.env);
+
+      req.decoded = decoded;
+      next();
+  })
+}
+
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@cluster0.pbmjp.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -268,7 +286,7 @@ async function run() {
         $set: user,
       };
       const result = await userCollection.updateOne(filter, updateDoc, options);
-      // const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+      // const token = jwt.sign({ email: email },secretTicket, { expiresIn: '1h' })
       res.send(result);
     });
 
