@@ -60,6 +60,30 @@ async function run() {
       res.send(result)
     })
 
+    app.put('/purchase/:id', async(req, res) =>{
+      const id = req.params.id;
+      const tool = req.body;
+      const filter = {_id: ObjectId(id)};
+      const options = { upsert: true };
+      const updatedDoc = {
+          $set: {
+            quantity: tool.quantity,
+          }
+      };
+      const result = await ordersCollection.updateOne(filter, updatedDoc, options);
+      res.send(result);
+    
+    })
+
+
+    app.get('/purchase/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: ObjectId(id) }
+
+      const singletool = await toolsCollection.findOne(query)
+      res.send(singletool)
+    })
+
 
 
 
