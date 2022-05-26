@@ -154,6 +154,50 @@ async function run() {
     });
 
 
+    
+    app.put('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updatedDoc, options);
+      const result2 = await userCollection.insertOne(user);
+      res.send(result2);
+
+    })
+
+    app.put('/orders/:id', async(req, res) =>{
+      const id  = req.params.id;
+      
+      const payment = req.body;
+      const filter = {_id: ObjectId(id)};
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set:{
+                id:payment.id,
+                name:payment.name,
+                img:payment.img,
+                description:payment.description,
+                price:payment.price,
+                minQuantity:payment.minQuantity,
+                availableQuantity:payment.availableQuantity,
+                quantity:payment.quantity,
+                email:payment.email, 
+                paid:true,
+                transactionId:payment.transactionId
+          
+        },
+    };
+      const result = await paymentCollection.insertOne(payment);
+      const updatedBooking = await ordersCollection.updateOne(filter,updatedDoc,options);
+      res.send(updatedBooking);
+    })
+
+
+
 
 
 
