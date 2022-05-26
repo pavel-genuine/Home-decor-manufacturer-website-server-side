@@ -209,6 +209,28 @@ async function run() {
       res.send(result);
     })
 
+    app.post('/order', async (req, res) => {
+      const order = req.body;
+      const result = await ordersCollection.insertOne(order);
+      res.send(result)
+    })
+
+    // app.post('/orders/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const payment = req.body;
+    //   const result = await paymentCollection.insertOne(payment);
+    //   const updatedBooking = await ordersCollection.insertOne(payment);
+    //   res.send(updatedBooking);
+    // })
+
+    app.get('/paid/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: ObjectId(id) }
+      const singlepaid = await paymentCollection.findOne(query)
+      res.send(singlepaid)
+    })
+
+
 
 
 
