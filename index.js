@@ -155,7 +155,7 @@ async function run() {
 
 
     
-    app.put('/user/:email', async (req, res) => {
+    app.put('/users/:email', async (req, res) => {
       const email = req.params.email;
       const user = req.body;
       const filter = { email: email };
@@ -169,32 +169,7 @@ async function run() {
 
     })
 
-    app.put('/orders/:id', async(req, res) =>{
-      const id  = req.params.id;
-      
-      const payment = req.body;
-      const filter = {_id: ObjectId(id)};
-      const options = { upsert: true };
-      const updatedDoc = {
-        $set:{
-                id:payment.id,
-                name:payment.name,
-                img:payment.img,
-                description:payment.description,
-                price:payment.price,
-                minQuantity:payment.minQuantity,
-                availableQuantity:payment.availableQuantity,
-                quantity:payment.quantity,
-                email:payment.email, 
-                paid:true,
-                transactionId:payment.transactionId
-          
-        },
-    };
-      const result = await paymentCollection.insertOne(payment);
-      const updatedBooking = await ordersCollection.updateOne(filter,updatedDoc,options);
-      res.send(updatedBooking);
-    })
+   
 
     app.delete('/orders/:id', async (req, res) => {
       const id = req.params.id;
@@ -230,27 +205,58 @@ async function run() {
       res.send(singlepaid)
     })
 
+    app.put('/orders/:id', async(req, res) =>{
+      const id  = req.params.id;
+      
+      const payment = req.body;
+      const filter = {id: id};
+      // const options = { upsert: true };
+      const updatedDoc = {
+        $set:{
+                id:payment.id,
+                name:payment.name,
+                img:payment.img,
+                description:payment.description,
+                price:payment.price,
+                minQuantity:payment.minQuantity,
+                availableQuantity:payment.availableQuantity,
+                quantity:payment.quantity,
+                email:payment.email, 
+                paid:true,
+                transactionId:payment.transactionId
+          
+        },
+    };
+      const result = await paymentCollection.insertOne(payment);
+      const updatedBooking = await ordersCollection.updateOne(filter,updatedDoc);
+      res.send(updatedBooking);
+    })
+
     
-    app.put('/user/admin/:email', async (req, res) => {
+    
+    app.put('/user/admin/:email',  async (req, res) => {
       const email = req.params.email;
       const filter = { email: email };
-      const user =req.body;
       const updateDoc = {
-                role: 'admin',
-                name:user.name,
-                email:user.email,
-                phone:user.phone
+        $set: { role: 'admin' },
       };
-      const result = await userCollection.insertOne(updateDoc);
+      const result = await userCollection.updateOne(filter, updateDoc);
       res.send(result);
     })
 
-    app.get('/admin/:email', async (req, res) => {
+    app.put('/user/:email', async (req, res) => {
       const email = req.params.email;
-      const user = await userCollection.findOne({ email: email });
-      const isAdmin = user?.role === 'admin';
-      res.send({ admin: isAdmin })
-    })
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      // const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+      res.send(result);
+    });
+
 
   }
   finally {
@@ -260,14 +266,6 @@ async function run() {
 }
 
 run().catch(console.dir)
-
-
-
-
-
-
-
-
 
 
 
