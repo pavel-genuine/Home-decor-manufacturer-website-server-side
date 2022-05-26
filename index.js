@@ -78,7 +78,7 @@ async function run() {
       res.send(result)
     })
 
-    app.put('/purchase/:id', async(req, res) =>{
+    app.put('/purchase/:id',verifyJWT, async(req, res) =>{
       const id = req.params.id;
       const tool = req.body;
       const filter = {_id: ObjectId(id)};
@@ -93,7 +93,7 @@ async function run() {
     
     })
 
-    app.put('/shipped/:id', async(req, res) =>{
+    app.put('/shipped/:id',verifyJWT, async(req, res) =>{
       const id = req.params.id;
       const tool = req.body;
       const filter = {_id: ObjectId(id)};
@@ -126,7 +126,7 @@ async function run() {
 
 
 
-    app.post('/user', async (req, res) => {
+    app.post('/user',verifyJWT, async (req, res) => {
       const user = req.body;
       const result = await userCollection.insertOne(user);
       res.send(result)
@@ -145,7 +145,7 @@ async function run() {
       res.send(allreviews)
     })
 
-    app.get('/user/:email', async (req, res) => {
+    app.get('/user/:email',verifyJWT, async (req, res) => {
       const email = req.params.email;
       const query = { email: email }
       const user = await userCollection.findOne(query)
@@ -173,7 +173,7 @@ async function run() {
       // }
     })
 
-    app.post('/create-payment-intent', async (req, res) => {
+    app.post('/create-payment-intent', verifyJWT, async (req, res) => {
       const service = req.body;
       const price = service.totalPrice;
       const amount = price * 100;
@@ -231,7 +231,7 @@ async function run() {
     //   res.send(updatedBooking);
     // })
 
-    app.get('/paid/:id', async (req, res) => {
+    app.get('/paid/:id',verifyJWT, async (req, res) => {
       const id = req.params.id
       const query = { _id: ObjectId(id) }
       const singlepaid = await paymentCollection.findOne(query)
@@ -267,7 +267,7 @@ async function run() {
 
     
     
-    app.put('/user/admin/:email',  async (req, res) => {
+    app.put('/user/admin/:email',verifyJWT,  async (req, res) => {
       const email = req.params.email;
       const filter = { email: email };
       const updateDoc = {
